@@ -12,14 +12,19 @@ set -e
 
 mvn -q package dependency:copy-dependencies
 
-CLASSPATH=""
+CLASSPATH="."
 for jar in $(ls target/dependency/*.jar target/java-opentracing-tutorial-*.jar); do
-  CLASSPATH=$CLASSPATH:$jar
+  CLASSPATH=$jar:$CLASSPATH
 done
 
-ADD_MODULES=""
-if [ "$(java -version 2>&1 | head -1 | grep '\"1\.[78].\+\"')" = "" ]; then
-  ADD_MODULES="--add-modules=java.xml.bind"
-fi
+CLASSPATH=target/classes:$CLASSPATH
 
+ADD_MODULES=""
+#if [ "$(java -version 2>&1 | head -1 | grep '\"1\.[78].\+\"')" = "" ]; then
+#  ADD_MODULES="--add-modules=java.xml.bind"
+#fi
+
+cd target
+pwd
+echo "java $ADD_MODULES -cp $CLASSPATH $className $*"
 java $ADD_MODULES -cp $CLASSPATH $className $*
